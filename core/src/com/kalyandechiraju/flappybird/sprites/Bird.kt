@@ -7,6 +7,8 @@ class Bird(x: Float, y: Float) {
 
   private val gravity = -15f
 
+  private val movement = 100
+
   val position by lazy { Vector3(x, y, 0f) }
 
   private val velocity by lazy { Vector3(0f, 0f, 0f) }
@@ -23,11 +25,12 @@ class Bird(x: Float, y: Float) {
     // Scale the velocity as per deltaTime
     velocity.scl(deltaTime)
 
-    // Add to position based on y value of velocity
-    position.add(0f, velocity.y, 0f)
+    // Add to position based on y value of velocity and
+    // move the bird by a factor of deltaTime and movement constant
+    position.add(movement * deltaTime, velocity.y, 0f)
 
     // Scale the velocity at inverse deltaTime
-    velocity.scl(1/deltaTime)
+    velocity.scl(1 / deltaTime)
 
     // To not let bird fall off of the screen
     if (position.y < 0) position.y = 0f
