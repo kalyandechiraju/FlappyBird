@@ -42,11 +42,12 @@ class PlayState(manager: GameStateManager) : State(manager) {
     // For camera to follow the bird and 80 to add some offset
     camera.position.x = bird.position.x + 80
 
-    for (tube in tubes) {
+    // Don't use forEach here -> Array (libgdx) doesn't support nested iterations
+    for (i in 0 until tubes.size) {
+      val tube = tubes[i]
       if ((camera.position.x - (camera.viewportWidth / 2)) > (tube.posTopTube.x + tube.topTube.width)) {
         tube.reposition(tube.posTopTube.x + ((Tube.TUBE_WIDTH + tubeSpacing) * tubeCount))
       }
-
       // If bird hits with any of the tubes, reset the play state
       if (tube.didCollide(bird.bounds)) gameStateManager.set(PlayState(gameStateManager))
     }
@@ -59,7 +60,7 @@ class PlayState(manager: GameStateManager) : State(manager) {
     batch.begin()
     batch.draw(background, (camera.position.x - (camera.viewportWidth / 2)), 0f)
     batch.draw(bird.texture, bird.position.x, bird.position.y)
-    for (tube in tubes) {
+    tubes.forEach { tube ->
       batch.draw(tube.topTube, tube.posTopTube.x, tube.posTopTube.y)
       batch.draw(tube.bottomTube, tube.posBotTube.x, tube.posBotTube.y)
     }
@@ -67,6 +68,8 @@ class PlayState(manager: GameStateManager) : State(manager) {
   }
 
   override fun dispose() {
-
+    background.dispose()
+    bird.dispose()
+    tubes.forEach { it.dispose() }
   }
 }

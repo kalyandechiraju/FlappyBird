@@ -44,4 +44,8 @@ class Bird(x: Float, y: Float) {
   fun jump() {
     velocity.y = 250f
   }
+
+  fun dispose() {
+    texture.dispose()
+  }
 }

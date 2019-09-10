@@ -37,4 +37,9 @@ class Tube(x: Float) {
   }
 
   fun didCollide(bird: Rectangle) = bird.overlaps(boundsTop) || bird.overlaps(boundsBottom)
+
+  fun dispose() {
+    topTube.dispose()
+    bottomTube.dispose()
+  }
 }
