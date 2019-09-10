@@ -1,6 +1,7 @@
 package com.kalyandechiraju.flappybird.sprites
 
 import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector2
 import java.util.*
 
@@ -23,8 +24,17 @@ class Tube(x: Float) {
 
   val posBotTube by lazy { Vector2(x, (posTopTube.y - tubeGap - bottomTube.height)) }
 
+  private val boundsTop by lazy { Rectangle(posTopTube.x, posTopTube.y, topTube.width.toFloat(), topTube.height.toFloat()) }
+
+  private val boundsBottom by lazy { Rectangle(posBotTube.x, posBotTube.y, bottomTube.width.toFloat(), bottomTube.height.toFloat()) }
+
   fun reposition(x: Float) {
     posTopTube.set(x, (random.nextInt(fluctuation) + tubeGap + lowestOpening).toFloat())
     posBotTube.set(x, (posTopTube.y - tubeGap - bottomTube.height))
+
+    boundsTop.setPosition(posTopTube.x, posTopTube.y)
+    boundsBottom.setPosition(posBotTube.x, posBotTube.y)
   }
+
+  fun didCollide(bird: Rectangle) = bird.overlaps(boundsTop) || bird.overlaps(boundsBottom)
 }

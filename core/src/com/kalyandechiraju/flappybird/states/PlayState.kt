@@ -46,6 +46,9 @@ class PlayState(manager: GameStateManager) : State(manager) {
       if ((camera.position.x - (camera.viewportWidth / 2)) > (tube.posTopTube.x + tube.topTube.width)) {
         tube.reposition(tube.posTopTube.x + ((Tube.TUBE_WIDTH + tubeSpacing) * tubeCount))
       }
+
+      // If bird hits with any of the tubes, reset the play state
+      if (tube.didCollide(bird.bounds)) gameStateManager.set(PlayState(gameStateManager))
     }
 
     camera.update()
