@@ -2,6 +2,7 @@ package com.kalyandechiraju.flappybird
 
 import com.badlogic.gdx.ApplicationAdapter
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.audio.Music
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
@@ -19,10 +20,20 @@ class FlappyBird : ApplicationAdapter() {
   private var img: Texture? = null
   private var manager: GameStateManager? = null
 
+  // In LibGDX Music will be streamed from Disk and
+  // Sound will be loaded into memory(RAM) for better resource management
+  private var music: Music? = null
+
   override fun create() {
     batch = SpriteBatch()
     img = Texture("badlogic.jpg")
     manager = GameStateManager()
+
+    music = Gdx.audio.newMusic(Gdx.files.internal("music.mp3"))
+    music?.isLooping = true
+    music?.volume = 0.05f
+    music?.play()
+
     Gdx.gl.glClearColor(1f, 1f, 1f, 1f)
     manager?.let {
       it.push(MenuState(it))
@@ -35,13 +46,11 @@ class FlappyBird : ApplicationAdapter() {
     batch?.let {
       manager?.render(it)
     }
-    /*batch?.begin()
-    batch?.draw(img, 0f, 0f)
-    batch?.end()*/
   }
 
   override fun dispose() {
     batch?.dispose()
     img?.dispose()
+    music?.dispose()
   }
 }

@@ -1,6 +1,8 @@
 package com.kalyandechiraju.flappybird.sprites
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector3
 
@@ -14,11 +16,25 @@ class Bird(x: Float, y: Float) {
 
   private val velocity by lazy { Vector3(0f, 0f, 0f) }
 
-  val texture by lazy { Texture("bird.png") }
+  private val texture by lazy { Texture("birdanimation.png") }
 
-  val bounds by lazy { Rectangle(x, y, texture.width.toFloat(), texture.height.toFloat()) }
+  // width should be divided by 3 as we switched to bird animated texture
+  val bounds by lazy { Rectangle(x, y, texture.width.toFloat() / 3, texture.height.toFloat()) }
+
+  private val birdAnimation by lazy {
+    Animation(region = TextureRegion(texture), frameCount = 3, cycleTime = 0.5f)
+  }
+
+  private val flap by lazy {
+    Gdx.audio.newSound(Gdx.files.internal("sfx_wing.ogg"))
+  }
+
+  fun getBirdTextureRegion(): TextureRegion = birdAnimation.getFrame()
 
   fun update(deltaTime: Float) {
+    // update bird animation
+    birdAnimation.update(deltaTime)
+
     // Only update velocity if the bird is above ground
     if (position.y > 0) {
       // For every update, we add gravity to velocity in only y-axis direction
@@ -43,9 +59,13 @@ class Bird(x: Float, y: Float) {
 
   fun jump() {
     velocity.y = 250f
+
+    // Play the flap sound
+    flap.play(0.5f)
   }
 
   fun dispose() {
     texture.dispose()
+    flap.dispose()
   }
 }

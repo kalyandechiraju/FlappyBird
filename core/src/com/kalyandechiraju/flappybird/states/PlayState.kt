@@ -60,11 +60,15 @@ class PlayState(manager: GameStateManager) : State(manager) {
         tube.reposition(tube.posTopTube.x + ((Tube.TUBE_WIDTH + tubeSpacing) * tubeCount))
       }
       // If bird hits with any of the tubes, reset the play state
-      if (tube.didCollide(bird.bounds)) gameStateManager.set(PlayState(gameStateManager))
+      if (tube.didCollide(bird.bounds)) {
+        gameStateManager.set(PlayState(gameStateManager))
+      }
     }
 
     // If bird collides with the ground, reset the play state
-    if (bird.position.y <= ground.height + groundOffset) gameStateManager.set(PlayState(gameStateManager))
+    if (bird.position.y <= ground.height + groundOffset) {
+      gameStateManager.set(PlayState(gameStateManager))
+    }
 
     // actually moves the camera with the bird
     camera.update()
@@ -74,7 +78,7 @@ class PlayState(manager: GameStateManager) : State(manager) {
     batch.projectionMatrix = camera.combined
     batch.begin()
     batch.draw(background, (camera.position.x - (camera.viewportWidth / 2)), 0f)
-    batch.draw(bird.texture, bird.position.x, bird.position.y)
+    batch.draw(bird.getBirdTextureRegion(), bird.position.x, bird.position.y)
     tubes.forEach { tube ->
       batch.draw(tube.topTube, tube.posTopTube.x, tube.posTopTube.y)
       batch.draw(tube.bottomTube, tube.posBotTube.x, tube.posBotTube.y)
