@@ -29,11 +29,15 @@ class Bird(x: Float, y: Float) {
     Gdx.audio.newSound(Gdx.files.internal("sfx_wing.ogg"))
   }
 
+  var isColliding = false
+
   fun getBirdTextureRegion(): TextureRegion = birdAnimation.getFrame()
 
   fun update(deltaTime: Float) {
-    // update bird animation
-    birdAnimation.update(deltaTime)
+    if (isColliding.not()) {
+      // update bird animation
+      birdAnimation.update(deltaTime)
+    }
 
     // Only update velocity if the bird is above ground
     if (position.y > 0) {
@@ -44,9 +48,11 @@ class Bird(x: Float, y: Float) {
     // Scale the velocity as per deltaTime
     velocity.scl(deltaTime)
 
-    // Add to position based on y value of velocity and
-    // move the bird by a factor of deltaTime and movement constant
-    position.add(movement * deltaTime, velocity.y, 0f)
+    if (isColliding.not()) {
+      // Add to position based on y value of velocity and
+      // move the bird by a factor of deltaTime and movement constant
+      position.add(movement * deltaTime, velocity.y, 0f)
+    }
 
     // To not let bird fall off of the screen
     if (position.y < 0) position.y = 0f

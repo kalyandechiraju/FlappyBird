@@ -25,6 +25,11 @@ class PlayState(manager: GameStateManager) : State(manager) {
 
   private val ground by lazy { Texture("ground.png") }
 
+  private val gameOverImage by lazy { Texture("gameover.png") }
+
+  // State to manage gameover state
+  private var gameOver = false
+
   // Starts at left side of the screen
   private val groundOne by lazy { Vector2(camera.position.x - camera.viewportWidth / 2, groundOffset) }
 
@@ -41,7 +46,11 @@ class PlayState(manager: GameStateManager) : State(manager) {
 
   override fun handleInput() {
     if (Gdx.input.justTouched()) {
-      bird.jump()
+      if (gameOver) {
+        gameStateManager.set(PlayState(gameStateManager))
+      } else {
+        bird.jump()
+      }
     }
   }
 
@@ -61,13 +70,17 @@ class PlayState(manager: GameStateManager) : State(manager) {
       }
       // If bird hits with any of the tubes, reset the play state
       if (tube.didCollide(bird.bounds)) {
-        gameStateManager.set(PlayState(gameStateManager))
+        //gameStateManager.set(PlayState(gameStateManager))
+        bird.isColliding = true
+        gameOver = true
       }
     }
 
     // If bird collides with the ground, reset the play state
     if (bird.position.y <= ground.height + groundOffset) {
-      gameStateManager.set(PlayState(gameStateManager))
+      //gameStateManager.set(PlayState(gameStateManager))
+      bird.isColliding = true
+      gameOver = true
     }
 
     // actually moves the camera with the bird
@@ -85,15 +98,19 @@ class PlayState(manager: GameStateManager) : State(manager) {
     }
     batch.draw(ground, groundOne.x, groundOne.y)
     batch.draw(ground, groundTwo.x, groundTwo.y)
+
+    if (gameOver) {
+      batch.draw(gameOverImage, camera.position.x - gameOverImage.width / 2, camera.position.y)
+    }
     batch.end()
   }
 
   private fun updateGround() {
     // If camera crosses half point of the ground, move the ground to the right
-    if (camera.position.x - (camera.viewportWidth/2) > groundOne.x + ground.width) {
+    if (camera.position.x - (camera.viewportWidth / 2) > groundOne.x + ground.width) {
       groundOne.add(ground.width.toFloat() * 2, 0f)
     }
-    if (camera.position.x - (camera.viewportWidth/2) > groundTwo.x + ground.width) {
+    if (camera.position.x - (camera.viewportWidth / 2) > groundTwo.x + ground.width) {
       groundTwo.add(ground.width.toFloat() * 2, 0f)
     }
   }
